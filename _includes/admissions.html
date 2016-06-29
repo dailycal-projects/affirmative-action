@@ -1,0 +1,523 @@
+<script type="text/javascript">
+
+var graphicData = [
+{
+	"date": 1995,
+	"Black": 0.5013,
+	"American Indian": 0.6667,
+	"Asian": 0.3358,
+	"Latino": 0.5509,
+	"White": 0.3907
+},
+{
+	"date": 1996,
+	"Black": 0.4957,
+	"American Indian": 0.6369,
+	"Asian": 0.3181,
+	"Latino": 0.4915,
+	"White": 0.3681
+},
+{
+	"date": 1997,
+	"Black": 0.4959,
+	"American Indian": 0.5043,
+	"Asian": 0.2836,
+	"Latino": 0.4544,
+	"White": 0.3065
+},
+{
+	"date": 1998,
+	"Black": 0.2027,
+	"American Indian": 0.1824,
+	"Asian": 0.3073,
+	"Latino": 0.2079,
+	"White": 0.3324
+},
+{
+	"date": 1999,
+	"Black": 0.2823,
+	"American Indian": 0.2794,
+	"Asian": 0.2913,
+	"Latino": 0.2787,
+	"White": 0.2991
+},
+{
+	"date": 2000,
+	"Black": 0.284,
+	"American Indian": 0.2808,
+	"Asian": 0.284,
+	"Latino": 0.2754,
+	"White": 0.3021
+},
+{
+	"date": 2001,
+	"Black": 0.2492,
+	"American Indian": 0.284,
+	"Asian": 0.275,
+	"Latino": 0.2691,
+	"White": 0.2931
+},
+{
+	"date": 2002,
+	"Black": 0.2267,
+	"American Indian": 0.247,
+	"Asian": 0.2607,
+	"Latino": 0.2494,
+	"White": 0.269
+},
+{
+	"date": 2003,
+	"Black": 0.1931,
+	"American Indian": 0.2711,
+	"Asian": 0.2598,
+	"Latino": 0.2288,
+	"White": 0.2636
+},
+{
+	"date": 2004,
+	"Black": 0.154,
+	"American Indian": 0.2532,
+	"Asian": 0.2676,
+	"Latino": 0.2049,
+	"White": 0.2854
+},
+{
+	"date": 2005,
+	"Black": 0.1994,
+	"American Indian": 0.256,
+	"Asian": 0.2909,
+	"Latino": 0.234,
+	"White": 0.294
+},
+{
+	"date": 2006,
+	"Black": 0.181,
+	"American Indian": 0.2374,
+	"Asian": 0.2674,
+	"Latino": 0.2074,
+	"White": 0.2581
+},
+{
+	"date": 2007,
+	"Black": 0.1692,
+	"American Indian": 0.2585,
+	"Asian": 0.2632,
+	"Latino": 0.1971,
+	"White": 0.2591
+},
+{
+	"date": 2008,
+	"Black": 0.154,
+	"American Indian": 0.202,
+	"Asian": 0.241,
+	"Latino": 0.1645,
+	"White": 0.2348
+},
+{
+	"date": 2009,
+	"Black": 0.1554,
+	"American Indian": 0.2034,
+	"Asian": 0.2565,
+	"Latino": 0.1728,
+	"White": 0.2568
+},
+{
+	"date": 2010,
+	"Black": 0.129,
+	"American Indian": 0.2138,
+	"Asian": 0.2093,
+	"Latino": 0.1427,
+	"White": 0.2042
+},
+{
+	"date": 2011,
+	"Black": 0.1314,
+	"American Indian": 0.2148,
+	"Asian": 0.2099,
+	"Latino": 0.1412,
+	"White": 0.1875
+},
+{
+	"date": 2012,
+	"Black": 0.1252,
+	"American Indian": 0.1977,
+	"Asian": 0.2077,
+	"Latino": 0.1336,
+	"White": 0.1845
+},
+{
+	"date": 2013,
+	"Black": 0.1094,
+	"American Indian": 0.1913,
+	"Asian": 0.1961,
+	"Latino": 0.1119,
+	"White": 0.1712
+},
+{
+	"date": 2014,
+	"Black": 0.0923,
+	"American Indian": 0.1889,
+	"Asian": 0.1878,
+	"Latino": 0.1225,
+	"White": 0.1724
+},
+{
+	"date": 2015,
+	"Black": 0.129,
+	"American Indian": 0.1828,
+	"Asian": 0.2267,
+	"Latino": 0.1369,
+	"White": 0.1958
+}
+]
+
+/*
+* Convert arbitrary strings to valid css classes.
+* via: https://gist.github.com/mathewbyrne/1280286
+*
+* NOTE: This implementation must be consistent with the Python classify
+* function defined in base_filters.py.
+*/
+var classify = function(str) {
+	return str.toLowerCase()
+			.replace(/\s+/g, '-')           // Replace spaces with -
+			.replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+			.replace(/\-\-+/g, '-')         // Replace multiple - with single -
+			.replace(/^-+/, '')             // Trim - from start of text
+			.replace(/-+$/, '');            // Trim - from end of text
+}
+
+/*
+* Convert key/value pairs to a style string.
+*/
+var formatStyle = function(props) {
+	var s = '';
+
+	for (var key in props) {
+			s += key + ': ' + props[key].toString() + '; ';
+	}
+
+	return s;
+}
+
+/*
+* Create a SVG tansform for a given translation.
+*/
+var makeTranslate = function(x, y) {
+	var transform = d3.transform();
+
+	transform.translate[0] = x;
+	transform.translate[1] = y;
+
+	return transform.toString();
+}
+
+/*
+* Parse a url parameter by name.
+* via: http://stackoverflow.com/a/901144
+*/
+var getParameterByName = function(name) {
+	name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+			results = regex.exec(location.search);
+	return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+/*
+* Convert a url to a location object.
+*/
+var urlToLocation = function(url) {
+	var a = document.createElement('a');
+	a.href = url;
+	return a;
+}
+
+$(document).ready(function() {
+	// Global config
+	var $graphic = $('#admissions-graphic');
+	var GRAPHIC_DEFAULT_WIDTH = 600;
+	var MOBILE_THRESHOLD = 500;
+	// Global vars
+	var isMobile = false;
+	// D3 formatters
+	var fmtYearAbbrev = d3.time.format('%y');
+	var fmtYearFull = d3.time.format('%Y');
+	var fmtMonthYear = d3.time.format("%b '%y");
+
+	/*
+	 * Format graphic data for processing by D3.
+	 */
+	var formatData = function() {
+	    graphicData.forEach(function(d) {
+	        d['date'] = d3.time.format('%Y').parse(d['date'].toString());
+	        for (var key in d) {
+	            if (key != 'date') {
+	                d[key] = +d[key] * 100;
+	            }
+	        }
+	    });
+	}
+	/*
+	 * Render the graphic.
+	 */
+	 var renderAdmissionsChart = function() {
+		var containerWidth = $graphic.width();
+	    if (!containerWidth) {
+	        containerWidth = GRAPHIC_DEFAULT_WIDTH;
+	    }
+	    if (containerWidth <= MOBILE_THRESHOLD) {
+	        isMobile = true;
+	    } else {
+	        isMobile = false;
+	    }
+	    // Render the chart!
+	    renderLineChart({
+	        container: '#admissions-graphic',
+	        width: containerWidth,
+	        data: graphicData,
+	    });
+	}
+	/*
+	 * Render a line chart.
+	 */
+	var renderLineChart = function(config) {
+	    /*
+	     * Setup
+	     */
+	    var dateColumn = 'date';
+	    var valueColumn = 'amt';
+	    var aspectWidth = isMobile ? 4 : 5;
+	    var aspectHeight = isMobile ? 3 : 2;
+	    var margins = {
+	        top: 5,
+	        right: 5,
+	        bottom: 20,
+	        left: 35
+	    };
+	    var ticksX = 12;
+	    var ticksY = 5;
+	    var roundTicksFactor = 10;
+	    // Mobile
+	    if (isMobile) {
+	        ticksX = 5;
+	    }
+	    // Calculate actual chart dimensions
+	    var chartWidth = config['width'] - margins['left'] - margins['right'];
+	    var chartHeight = Math.ceil((config['width'] * aspectHeight) / aspectWidth) - margins['top'] - margins['bottom'];
+	    // Clear existing graphic (for redraw)
+	    var containerElement = d3.select(config['container']);
+	    containerElement.html('');
+	    var formattedData = {};
+	    /*
+	     * Restructure tabular data for easier charting.
+	     */
+
+			var data_one = {};
+ 			var data_two = {};
+			var cutoff = d3.time.format('%Y').parse('1998');
+
+	    for (var column in graphicData[0]) {
+	        if (column == dateColumn) {
+	            continue;
+	        }
+	        formattedData[column] = graphicData.map(function(d) {
+	            return {
+	                'date': d[dateColumn],
+	                'amt': d[column]
+	            };
+	        });
+	    }
+
+			for (var column in formattedData) {
+				data_one[column] = [];
+				data_two[column] = [];
+				formattedData[column].forEach(function(d) {
+					if (d[dateColumn] < cutoff) {
+						data_one[column].push(d);
+					} else {
+						data_two[column].push(d);
+					}
+				})
+			}
+
+	    /*
+	     * Create D3 scale objects.
+	     */
+	    var xScale = d3.time.scale()
+	        .domain(d3.extent(config['data'], function(d) {
+	            return d[dateColumn];
+	        }))
+	        .range([ 0, chartWidth ])
+	    var yScale = d3.scale.linear()
+	        .domain([ 0, d3.max(d3.entries(formattedData), function(c) {
+	                return d3.max(c['value'], function(v) {
+	                    var n = v[valueColumn];
+	                    return Math.ceil(n / roundTicksFactor) * roundTicksFactor;
+	                });
+	            })
+	        ])
+	        .range([ chartHeight, 0 ]);
+
+	    var colorScale = d3.scale.ordinal()
+	        .domain(d3.keys(config['data'][0]).filter(function(key) {
+	            return key !== dateColumn;
+	        }))
+	        .range(['#a6cee3','#b2df8a','#1f78b4','#33a02c','#fb9a99']);
+	    /*
+	     * Render the HTML legend.
+	     */
+	    var legend = containerElement.append('ul')
+	        .attr('class', 'key')
+	        .selectAll('g')
+	            .data(d3.entries(formattedData))
+	        .enter().append('li')
+	            .attr('class', function(d, i) {
+	                return 'key-item key-' + i + ' ' + classify(d['key']);
+	            });
+	    legend.append('b')
+	        .style('background-color', function(d) {
+	            return colorScale(d['key']);
+	        });
+	    legend.append('label')
+	        .text(function(d) {
+	            return d['key'];
+	        });
+	    /*
+	     * Create the root SVG element.
+	     */
+	    var chartWrapper = containerElement.append('div')
+	        .attr('class', 'graphic-wrapper');
+	    var chartElement = chartWrapper.append('svg')
+	        .attr('width', chartWidth + margins['left'] + margins['right'])
+	        .attr('height', chartHeight + margins['top'] + margins['bottom'])
+	        .append('g')
+	        .attr('transform', 'translate(' + margins['left'] + ',' + margins['top'] + ')');
+	    /*
+	     * Create D3 axes.
+	     */
+	    var xAxis = d3.svg.axis()
+	        .scale(xScale)
+	        .orient('bottom')
+	        .ticks(ticksX)
+	        .tickFormat(function(d, i) {
+	            if (isMobile) {
+	                return '\u2019' + fmtYearAbbrev(d);
+	            } else {
+	                return fmtYearFull(d);
+	            }
+	        });
+	    var yAxis = d3.svg.axis()
+	        .scale(yScale)
+	        .orient('left')
+	        .ticks(ticksY)
+					.tickFormat(function(d) {
+	            return d.toString() + '%';
+	        });
+	    /*
+	     * Render axes to chart.
+	     */
+	    chartElement.append('g')
+	        .attr('class', 'x axis')
+	        .attr('transform', makeTranslate(0, chartHeight))
+	        .call(xAxis);
+	    chartElement.append('g')
+	        .attr('class', 'y axis')
+	        .call(yAxis);
+	    /*
+	     * Render grid to chart.
+	     */
+	    var xAxisGrid = function() {
+	        return xAxis;
+	    }
+	    chartElement.append('g')
+	        .attr('class', 'x grid')
+	        .attr('transform', makeTranslate(0, chartHeight))
+	        .call(xAxisGrid()
+	            .tickSize(-chartHeight, 0, 0)
+	            .tickFormat('')
+	        );
+
+	    /*
+	     * Render lines to chart.
+	     */
+	    var line = d3.svg.line()
+	    		.interpolate('monotone')
+	        .x(function(d) {
+	            return xScale(d[dateColumn]);
+	        })
+	        .y(function(d) {
+	            return yScale(d[valueColumn]);
+	        });
+
+	    chartElement.append('g')
+	        .attr('class', 'lines')
+	        .selectAll('path')
+	        .data(d3.entries(data_one))
+	        .enter()
+	        .append('path')
+	            .attr('class', function(d, i) {
+	                return 'line line-' + i + ' ' + classify(d['key']);
+	            })
+	            .attr('stroke', function(d) {
+	                return colorScale(d['key']);
+	            })
+	            .attr('d', function(d) {
+	                return line(d['value']);
+	            });
+
+			chartElement.append('g')
+	        .attr('class', 'lines')
+	        .selectAll('path')
+	        .data(d3.entries(data_two))
+	        .enter()
+	        .append('path')
+	            .attr('class', function(d, i) {
+	                return 'line line-' + i + ' ' + classify(d['key']);
+	            })
+	            .attr('stroke', function(d) {
+	                return colorScale(d['key']);
+	            })
+	            .attr('d', function(d) {
+	                return line(d['value']);
+	            });
+
+			var xPosition = (xScale(d3.time.format('%Y').parse('1997')) + xScale(d3.time.format('%Y').parse('1998')))/2;
+
+			chartElement.append("line")
+				   .attr("y1", yScale(0))
+				   .attr("y2", yScale(70))
+				   .attr("x1", xPosition)
+				   .attr("x2", xPosition)
+					 .attr( "stroke", "gray" )
+					 .attr( "stroke-width", "2" );
+
+			 var textContainer = chartElement.append("g")
+			 		 .attr('transform',makeTranslate(xScale(d3.time.format('%Y').parse('1998')), yScale(50)))
+						 .append("text")
+						 .append('tspan')
+	 					 .text('Proposition 209 took effect')
+						 .attr("font-family", "sans-serif")
+						 .attr("font-size", "14px")
+						 .attr('fill','#191919')
+						 .append("tspan")
+						.attr('dy','16px')
+						.attr('x','0')
+ 						.text('in fall 1998.')
+ 						.attr("font-family", "sans-serif")
+ 						.attr("font-size", "14px")
+ 						.attr('fill','#191919');
+
+	}
+	/*
+	 * Initially load the graphic
+	 */
+	formatData();
+ 	renderAdmissionsChart();
+	/*
+	* Set up resize event listener
+	*/
+	$( window ).resize(function() {
+	  renderAdmissionsChart();
+	});
+});
+</script>

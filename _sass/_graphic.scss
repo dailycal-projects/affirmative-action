@@ -1,0 +1,76 @@
+
+  .graphic {
+    font-family: sans-serif;
+  	margin: 30px auto;
+  	max-width: 1000px;
+  }
+  line, rect {
+    shape-rendering: crispEdges;
+  }
+
+  .axis {
+      font-size: 11px;
+      -webkit-font-smoothing: antialiased;
+      fill: #777;
+  }
+
+  .axis path, .axis line {
+      fill: none;
+      stroke: #ccc;
+      shape-rendering: crispEdges;
+  }
+
+  .grid path {
+      display: none;
+  }
+
+  .grid .tick {
+      stroke: #eee;
+      stroke-width: 1px;
+      shape-rendering: crispEdges;
+  }
+
+  .lines {
+      fill: none;
+      stroke-width: 2px;
+      stroke: #ccc;
+  }
+  .value text {
+      font-size: 12px;
+      font-weight: bold;
+      fill: #999;
+  }
+  .key {
+      margin: -11px 0 20px 0;
+      padding: 0;
+      list-style-type: none;
+      text-align: left;
+  }
+  .key .key-item {
+  	display: inline-block;
+  	margin: 0 18px 0 0;
+  	padding: 0;
+  	line-height: 15px;
+  }
+  .key .key-item b {
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      margin-right: 6px;
+      float: left;
+  }
+  .key .key-item label {
+      white-space: nowrap;
+      font-size: 12px;
+      color: #777;
+      font-weight: normal;
+      -webkit-font-smoothing: antialiased;
+      @media screen and (max-width: 500px) {
+          font-size: 10px;
+      }
+  }
+  @media (max-width: 500px) {
+      .value text {
+          font-size: 10px;
+      }
+  }
