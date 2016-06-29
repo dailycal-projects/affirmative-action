@@ -6,12 +6,12 @@
 # 'jekyll serve'. If you change this file, please restart the server process.
 
 # Site settings
-title: Affirmative Action at UC Berkeley
+title: Affirmative action and UC Berkeley | The Daily Californian
 email: schinoy@dailycal.org
 description: > # this means to ignore newlines until "baseurl:"
   On Thursday, the U.S. Supreme Court dealt a major victory to supporters of affirmative action when it upheld the consideration of race in the admissions policy of the University of Texas at Austin. However, the decision won’t impact the UC’s admissions policies, because California state law supersedes the verdict.
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://projects.dailycal.org/affirmative-action/" # the base hostname & protocol for your site
+baseurl: "/affirmative-action" # the subpath of your site, e.g. /blog
+url: "http://projects.dailycal.org/" # the base hostname & protocol for your site
 
 # Build settings
 markdown: kramdown
